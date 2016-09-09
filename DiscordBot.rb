@@ -11,6 +11,10 @@ require 'steam-api'
 require 'openssl'
 require 'lol'
 
+#TODO: load these from elsewhere?
+servers = { "avant" => "rr3.re-renderreality.net:25565", "infinity" => "rr3.re-renderreality.net:25566", "vanilla"=> "rr3.re-renderreality.net:25570" }
+
+
 #Load Config File
 $CONFIG = YAML.load_file('config.yaml')
 
@@ -75,7 +79,7 @@ end
 bot.command(:random, description: "Responds with a number between arg1 and arg2",
 usage: "random arg1 arg2", min_arg: 2, max_args: 2) do |event, min, max|
 
-  result = rand(min.to_i .. max.to_i)
+  result = min.to_i < max.to_i ? rand(min.to_i .. max.to_i) : rand(max.to_i .. min.to_i)
   event.respond(result)
 
   #Console Output
@@ -113,14 +117,15 @@ end
 #List Roles Command
 bot.command(:listroles, description: "Print role IDs in console", usage: "listroles", permission_level: 101) do |event|
 	start = 0
-	num = 11
+	num = event.server.roles.length
+	out = ""
 	while start < num do
 		first = event.server.roles[start].id.to_s
 		second = event.server.roles[start].name.to_s
-		p first + " | " + second
+		out = out + first + " | " + second + "\n"
 		start += 1
-		sleep(1)
 	end
+	p out
 end
 
 #Eval Command
@@ -135,30 +140,37 @@ bot.command(:eval, description: "Run any code you want!!!", usage: "eval *Litera
   end
 end
 
+
+#where does code like this go?
+serverNamesConcat = ""
+servers.each do |key|
+	serverNamesConcat += "|"+key
+end
+#trim leading |
+serverNamesConcat[0] = ''
+
+
 #Check how many people are on
-bot.command :online, description: "Check how many people are currently on <X> server", usage: "online Avant|Infinity|Vanilla" do |event, server| 
+bot.command :online, description: "Check how many people are currently on <X> server", usage: "online "+serverNamesConcat do |event, server| 
 	begin
 		p Time.now.to_s + " " + event.user.name + " made a request"
 		serv_url = "rr3.re-renderreality.net"
-		egg = false
 
 		server = server.downcase()
-		case server
-			when "avant"
-				serv_url = "rr3.re-renderreality.net:25565"
-			when "infinity"
-				serv_url = "rr3.re-renderreality.net:25566"
-			when "vanilla"
-				serv_url = "rr3.re-renderreality.net:25570"
-			when "your_mom"
-				 serv_url = "rr3.re-renderreality.net:25566"
-				 egg = true
-			else
-				serv_url = server
+
+		# harambe tax
+		if server == "your_mom" then
+			event << "»\nStatus: **Getting Fucked**\nPlayers:  **2**/∞\n**AvaNight**\n***Harambe***"
+			return
 		end
 
+		# map lookup
+		if servers.has_key?(server) then
+			serv_url = servers[server]
+		else
+			serv_url = server
+		end
 
-		if egg == false
 		serv_url.delete! '()\'\"{};!@#$%^&*|,'
 
 		file = File.read('staff.json')
@@ -167,18 +179,17 @@ bot.command :online, description: "Check how many people are currently on <X> se
 		p serv
 		p serv['Players']['list'] & staff['Staff']
 
-
-		event << "»"
-		event << "Status: **Online**"
-		event << "Players: " + "**" + serv['Players']['online'].to_s + "**" + "/" + serv['Players']['max'].to_s
+		msg = "»\n"
+		msg += "Status: **Online**\n"
+		msg += "Players: " + "**" + serv['Players']['online'].to_s + "**" + "/" + serv['Players']['max'].to_s + "\n"
 
 		x = 0
 		playerson = serv['Players']['online']
 		while x < playerson do
 			if  staff['Staff'].include?(serv['Players']['list'][x].to_s) 
-				event << "**" + serv['Players']['list'][x] + "**"
+				msg += "**" + serv['Players']['list'][x] + "**\n"
 			else
-				event << serv['Players']['list'][x]
+				msg += serv['Players']['list'][x] + "\n"
 			end
 
 			p "element " + x.to_s + " complete" 
@@ -186,13 +197,9 @@ bot.command :online, description: "Check how many people are currently on <X> se
 			sleep(0.1)
 		end
 
-		else
-			event << "»"
-			event << "Status: **Getting Fucked**"
-			event << "Players: " + "**" + "2" + "**" + "/" + "∞"
-			event << "**AvaNight**"
-			event << "***Harambe***"
-		end
+		event << msg
+
+
 
 	rescue => e
 		if e.message.include?("\"Status\": false")
