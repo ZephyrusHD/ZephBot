@@ -6,18 +6,18 @@ require_relative 'DBMusic'
 require_relative 'DBMisc'
 
 
-
 #On startup
 @bot.ready do |event|
 
 	#Perms
-	@bot.set_user_permission(109517845678809088, 101)	#Zeph
-	@bot.set_user_permission(110907958824538112, 101)	#coldie
-	@bot.set_role_permission(210829888066813965, 100)	#Owner
-	@bot.set_role_permission(210832404636631040,  99)	#Admin
-	@bot.set_role_permission(210830743771938817,  50)	#Mod
-	@bot.set_role_permission(210832674623848460,  50)	#Staff
-	@bot.set_role_permission(211539951974612992,  50)	#Media Manager
+	@bot.set_user_permission(109517845678809088, 	101)	#Zeph
+   #@bot.set_user_permission(110907958824538112, 	101)	#coldie
+   #Not yet buddy ;) Gotta talk to Toast first
+	@bot.set_role_permission(210829888066813965,	100)	#Owner
+	@bot.set_role_permission(210832404636631040,	 99)	#Admin
+	@bot.set_role_permission(210830743771938817, 	 50)	#Mod
+	@bot.set_role_permission(210832674623848460, 	 50)	#Staff
+	@bot.set_role_permission(211539951974612992, 	 50)	#Media Manager
 	@bot.set_role_permission(212054054296092672,	 25)	#Veteran
 	@bot.set_role_permission(210829146903937024,	  1)	#@everyone
 
@@ -32,8 +32,8 @@ end
 #Eval Command
 @bot.command(:eval, description: "Run any code you want!!!", usage: "eval *Literally any code*", permission_level: 101) do |event, *code|
 	p Time.now.to_s + " " + event.user.name
-  break unless event.user.id == 109517845678809088 || event.user.id == 110907958824538112  # Replace number with your ID
-
+  break unless event.user.id == 109517845678809088 #|| event.user.id == 110907958824538112  # Replace number with your ID
+  													#Toasty first
   begin
     eval code.join(' ')
   rescue

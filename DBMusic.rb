@@ -1,8 +1,5 @@
 require_relative 'DBCommon'
 
-::RBNACL_LIBSODIUM_GEM_LIB_PATH = "libsodium.dll"
-
-
 
 @bot.command :voice	do |event|
 	bot.voice_connect(event.user.voice_channel.id)

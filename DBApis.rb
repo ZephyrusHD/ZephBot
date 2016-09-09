@@ -103,16 +103,18 @@ end
 						begin
 							event.respond("Minecraft Username set to " + info.join(" "))
 							uuid = JSON.parse(RestClient.get("http://minecraft-techworld.com/admin/api/uuid?action=uuid&username=" + info.join("")))
-							
+							p uuid
 							#Format uuid string
 							uuidstring = uuid['output']
+							p uuidstring
 							uuidstring.delete! '-'
-
+							p uuidstring
 							@db.execute("UPDATE players SET MCUN = ?, MCUUID = ? WHERE DISCORDID = ?", [$mc_SQL, uuidstring, $id_SQL])
 							#event.server(210829146903937024).member(event.user.id).add_role(212053760971767808)
-							bot.server(210829146903937024).member(event.user.id).add_role(212053760971767808)
+							@bot.server(210829146903937024).member(event.user.id).add_role(212053760971767808)
 
 						rescue => e
+							p e
 							event.respond("stop trying 2 break my bot pls")
 						end
 					end

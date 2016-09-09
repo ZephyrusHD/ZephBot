@@ -1,6 +1,8 @@
+
+::RBNACL_LIBSODIUM_GEM_LIB_PATH = "libsodium.dll"
+
 require 'yaml'
 require 'discordrb'
-
 
 
 #Load Config File
