@@ -32,7 +32,7 @@ end
 #Eval Command
 @bot.command(:eval, description: "Run any code you want!!!", usage: "eval *Literally any code*", permission_level: 101) do |event, *code|
 	p Time.now.to_s + " " + event.user.name
-  break unless event.user.id == 109517845678809088 # Replace number with your ID
+  break unless event.user.id == 109517845678809088 || event.user.id == 110907958824538112  # Replace number with your ID
 
   begin
     eval code.join(' ')
