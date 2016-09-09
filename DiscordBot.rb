@@ -12,6 +12,7 @@ require 'openssl'
 require 'lol'
 
 #TODO: load these from elsewhere?
+#sql?
 servers = { "avant" => "rr3.re-renderreality.net:25565", "infinity" => "rr3.re-renderreality.net:25566", "vanilla"=> "rr3.re-renderreality.net:25570" }
 
 
@@ -33,6 +34,14 @@ p "League API loaded"
 #Register API key from config
 Steam.apikey = $CONFIG['steamapi']
 p "Steam API loaded"
+
+#init server string
+serverNamesConcat = String.new
+servers.each do |key, value|
+	serverNamesConcat += "|"+key.to_s
+end
+#trim leading |
+serverNamesConcat[0] = ''
 
 #define function to reset SQLite3 variables bc I suck and idk how else to
 def reset_sql_vars()
@@ -139,16 +148,6 @@ bot.command(:eval, description: "Run any code you want!!!", usage: "eval *Litera
     'An error occured 😞'
   end
 end
-
-
-#where does code like this go?
-serverNamesConcat = String.new
-servers.each do |key, value|
-	serverNamesConcat += "|"+key.to_s
-end
-#trim leading |
-serverNamesConcat[0] = ''
-
 
 #Check how many people are on
 bot.command :online, description: "Check how many people are currently on <X> server", usage: "online "+serverNamesConcat do |event, server| 
