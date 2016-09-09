@@ -142,9 +142,9 @@ end
 
 
 #where does code like this go?
-serverNamesConcat = ""
-servers.each do |key|
-	serverNamesConcat += "|"+key
+serverNamesConcat = String.new
+servers.each do |key, value|
+	serverNamesConcat += "|"+key.to_s
 end
 #trim leading |
 serverNamesConcat[0] = ''
@@ -155,6 +155,11 @@ bot.command :online, description: "Check how many people are currently on <X> se
 	begin
 		p Time.now.to_s + " " + event.user.name + " made a request"
 		serv_url = "rr3.re-renderreality.net"
+
+		if server == nil then
+            event << "Please specify a server!"
+            return
+        end
 
 		server = server.downcase()
 
@@ -205,6 +210,8 @@ bot.command :online, description: "Check how many people are currently on <X> se
 		if e.message.include?("\"Status\": false")
 			event.respond("I couldn't find that server. Sorry!")
 			p "Server not found. Don't freak out!!!"
+		elsif e.message.include?("unexpected return")
+			nil
 		else
 			event.respond("<@109517845678809088> Something done fk'd up")
 			event.respond("BAD REQUEST!\n```\n"+e.inspect+"\n```")
@@ -438,7 +445,6 @@ end
 bot.command :stop do |event|
 	voice_bot = event.voice
 	voice_bot.stop_playing
-	nil
 end
 
 
