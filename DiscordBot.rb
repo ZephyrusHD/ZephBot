@@ -11,9 +11,7 @@ require_relative 'DBMisc'
 
 	#Perms
 	@bot.set_user_permission(109517845678809088, 	101)	#Zeph
-	if @bot.profile.username == "coldieBot" then #for testing
-   		@bot.set_user_permission(110907958824538112, 	101)	#coldie
-    end
+	#Moved into eval
 	@bot.set_role_permission(210829888066813965,	100)	#Owner
 	@bot.set_role_permission(210832404636631040,	 99)	#Admin
 	@bot.set_role_permission(210830743771938817, 	 50)	#Mod
@@ -31,9 +29,12 @@ end
 
 
 #Eval Command
-@bot.command(:eval, description: "Run any code you want!!!", usage: "eval *Literally any code*", permission_level: 101) do |event, *code|
+@bot.command(:eval, description: "Run any code you want!!!", usage: "eval *Literally any code*") do |event, *code|
 	p Time.now.to_s + " " + event.user.name
-  break unless event.user.id == 109517845678809088 || (@bot.profile.username == "coldieBot" && event.user.id == 110907958824538112)  # Replace number with your ID
+	if event.server.id.to_s == "YOURIDHERE" then 
+   		@bot.set_user_permission(110907958824538112, 	101)	#coldie perms on his server only
+    end
+  break unless event.user.id == 109517845678809088 || (event.server.id.to_s == "Coldies server id" && event.user.id == 110907958824538112)  # Replace number with your ID
   begin
     eval code.join(' ')
   rescue
