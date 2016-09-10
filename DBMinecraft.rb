@@ -42,6 +42,16 @@ end
 
 		server = server.downcase()
 
+		#list servers
+		if server == "list"	then 
+			event << "»"
+			servers.each do |key, value|
+				event << (key + " | " + value)
+			end
+			return
+		end
+
+
 		# harambe tax
 		if server == "your_mom" then
 			event << "»\nStatus: **Getting Fucked**\nPlayers:  **2**/∞\n**AvaNight**\n***Harambe***"
@@ -100,7 +110,7 @@ end
 @bot.command(:package) do |event|
 	file = File.read('staff.json')
 	staff = JSON.parse(file)
-	mcun = db.execute("SELECT MCUN FROM players WHERE DISCORDID = ?", [event.user.id])
+	mcun =@db.execute("SELECT MCUN FROM players WHERE DISCORDID = ?", [event.user.id])
 
 	if staff['Staff'].include?(mcun.join("")) 
 		url = "https://www.dropbox.com/home?preview=Staff+Installation.zip"
