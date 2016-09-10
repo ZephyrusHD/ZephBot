@@ -3,7 +3,7 @@ require_relative 'DBCommon'
 
 @bot.command( :meme, description: "Play a meme from the master meme database", usage: "meme <song_name>|list")	do |event, song|
 	if song == nil
-		event.respond("Please provide a song, or list!")
+		event.respond("Please provide a song, or run list!")
 	else
 		#make sure song name is lowercase
 		song.downcase!()
@@ -19,7 +19,7 @@ require_relative 'DBCommon'
 			songArray.each do |value|
 				if value.include? (song)
 					voice_bot.play_file(value)
-					return
+					return 
 				end
 			end
 
@@ -40,7 +40,8 @@ require_relative 'DBCommon'
 			if e.message.include?("undefined method")
 				event.respond("Are you in a voice channel?")
 			elsif e.message.include?("unexpected return")
-				event.respond("Song Stopped")
+				#event.respond("Song Stopped")
+				nil
 			else
 				event.respond(e)
 				event.respond("w0t")
