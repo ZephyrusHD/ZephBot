@@ -6,8 +6,6 @@ require 'openssl'
 
 #sqlite3 shit
 @db = SQLite3::Database.new "discord.db"
-p "SQLite3 Database loaded"
-
 
 #define function to reset SQLite3 variables bc I suck and idk how else to
 def reset_sql_vars()

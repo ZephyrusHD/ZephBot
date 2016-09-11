@@ -1,10 +1,14 @@
 require_relative 'DBCommon'
 
 
-
-#TODO: load these from elsewhere?
 #sql?
-servers = { "avant" => "rr3.re-renderreality.net:25565", "infinity" => "rr3.re-renderreality.net:25566", "vanilla"=> "rr3.re-renderreality.net:25570" }
+#List of servers
+servers = { 
+	"avant" => "rr3.re-renderreality.net:25565", 
+	"infinity" => "rr3.re-renderreality.net:25566", 
+	"vanilla"=> "rr3.re-renderreality.net:25570"
+
+}
 
 #init server string
 serverNamesConcat = String.new
@@ -15,9 +19,10 @@ end
 serverNamesConcat[0] = ''
 
 
-#Server info Command
-@bot.command(:serverinfo, description: "Lists server info for the Re-Render Reality Community!", 
+#Serverinfo Command
+@bot.command(:serverinfo, description: "Lists server info", 
 	usage: "serverinfo") do |event|
+	@logger.debug event.user.name + " :serverinfo"
 	event << "»"
 	event << "Name: Re-Render Reality!"
 	event << "Main IP: rr3.re-renderreality.net"
@@ -29,10 +34,10 @@ serverNamesConcat[0] = ''
 end
 
 
-#Check how many people are on
-@bot.command :online, description: "Check how many people are currently on <X> server", usage: "online "+serverNamesConcat do |event, server| 
+#Online Command
+@bot.command :online, description: "Check how many people are currently on the specified server", usage: "online "+serverNamesConcat do |event, server| 
+	@logger.debug event.user.name + " :online " + server.to_s
 	begin
-		p Time.now.to_s + " " + event.user.name + " made a request"
 		serv_url = "rr3.re-renderreality.net"
 
 		if server == nil then
@@ -50,7 +55,6 @@ end
 			end
 			return
 		end
-
 
 		# harambe tax
 		if server == "your_mom" then
@@ -70,8 +74,6 @@ end
 		file = File.read('staff.json')
 		serv = JSON.parse(RestClient.get("https://mcapi.ca/query/" + serv_url + "/list"))
 		staff = JSON.parse(file)
-		p serv
-		p serv['Players']['list'] & staff['Staff']
 
 		msg = "»\n"
 		msg += "Status: **Online**\n"
@@ -96,18 +98,19 @@ end
 	rescue => e
 		if e.message.include?("\"Status\": false")
 			event.respond("I couldn't find that server. Sorry!")
-			p "Server not found. Don't freak out!!!"
 		elsif e.message.include?("unexpected return")
 			nil
 		else
-			event.respond("<@109517845678809088> Something done fk'd up")
-			event.respond("BAD REQUEST!\n```\n"+e.inspect+"\n```")
+			event.respond("Something went wrong.")
+			@logger.error e
 		end
 	end
 end
 
 
-@bot.command(:package) do |event|
+#Package Command
+@bot.command(:package, description: "PM's the user the download package", usage: "package") do |event|
+	@logger.debug event.user.name + " :package"
 	file = File.read('staff.json')
 	staff = JSON.parse(file)
 	mcun =@db.execute("SELECT MCUN FROM players WHERE DISCORDID = ?", [event.user.id])

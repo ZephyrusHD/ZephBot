@@ -8,10 +8,8 @@ require_relative 'DBMisc'
 
 #On startup
 @bot.ready do |event|
-
 	#Perms
 	@bot.set_user_permission(109517845678809088, 	101)	#Zeph
-	#Moved into eval
 	@bot.set_role_permission(210829888066813965,	100)	#Owner
 	@bot.set_role_permission(210832404636631040,	 99)	#Admin
 	@bot.set_role_permission(210830743771938817, 	 50)	#Mod
@@ -23,22 +21,23 @@ require_relative 'DBMisc'
 	#Status. "Playing..."
 	@bot.game = ($CONFIG['status'])
 
-	#avatar
+	#Avatar
 	event.bot.profile.avatar = open("http://i.imgur.com/2UzHz5T.png")
 end
 
 
 #Eval Command
-@bot.command(:eval, description: "Run any code you want!!!", usage: "eval *Literally any code*") do |event, *code|
-	p Time.now.to_s + " " + event.user.name
+@bot.command(:eval, description: "Run any code you want!!!", usage: "eval *code here*") do |event, *code|
+	@logger.warn event.user.name + " :eval " + code.join()
 	if event.server.id.to_s == "YOURIDHERE" then 
    		@bot.set_user_permission(110907958824538112, 	101)	#coldie perms on his server only
     end
   break unless event.user.id == 109517845678809088 || (event.server.id.to_s == "Coldies server id" && event.user.id == 110907958824538112)  # Replace number with your ID
   begin
     eval code.join(' ')
-  rescue
-    'An error occured 😞'
+  rescue => e
+    event.respond("You suck.")
+    @logger.error e
   end
 end
 

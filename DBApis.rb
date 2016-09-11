@@ -6,17 +6,16 @@ require_relative 'DBCommon'
 require_relative 'DBSQL'
 
 
-
 #League api setup
 ra = Lol::Client.new $CONFIG['leagueapi'], {region: "na"}
-p "League API loaded"
 
 #Register API key from config
 Steam.apikey = $CONFIG['steamapi']
-p "Steam API loaded"
 
 
-@bot.command:skin do |event, name|
+#Skin Command
+@bot.command(:skin, description: "Shows your or the specified player's skin", usage: "skin <username_optional>" )do |event, name|
+	@logger.debug event.user.username + " ran skin " + name.to_s
 	if name == nil
 	#Your skin
 		mcun = @db.execute("SELECT MCUN FROM players WHERE DISCORDID = ?", [event.user.id])
@@ -35,40 +34,45 @@ p "Steam API loaded"
 end
 
 
-@bot.command(:steam) do |event, arg, *input|
-	case arg.downcase()
-		when "level"
-			begin
+#Steam Command
+@bot.command(:steam, description: "Shows various information related to steam", usage: "steam level <username_optional>") do |event, arg, *input|
+	@logger.debug event.user.username + " ran steam " + arg.to_s + " " + input.join()
+	if arg == nil
+		event.respond("try running ```steam level```")
+	else
+		case arg.downcase()
+			when "level"
+				begin
+					if input.to_s == "[]"
+						id = @db.execute("SELECT STEAM64 FROM players WHERE DISCORDID = ?", [event.user.id])
+						level = Steam::Player.steam_level(id.join("") )
+						event.respond("Your steam level is **" + level.to_s + "**")
+					else
+						id = @db.execute("SELECT STEAM64 FROM players WHERE DISCORDUN = ? OR STEAMID = ?", [input.join(""), input.join("")])
+						level = Steam::Player.steam_level(id.join("") )
+						event.respond( input.join(" ") + "'s steam level is **" + level.to_s + "**")
+					end
+				rescue => e
+					@logger.info e
+					event.respond("Sorry, I couldn't find that player. Are they registered?")
+				end
 
-			if input.to_s == "[]"
-				id = @db.execute("SELECT STEAM64 FROM players WHERE DISCORDID = ?", [event.user.id])
-				level = Steam::Player.steam_level(id.join("") )
-				event.respond("Your steam level is **" + level.to_s + "**")
-			else
-				id = @db.execute("SELECT STEAM64 FROM players WHERE DISCORDUN = ? OR STEAMID = ?", [input.join(""), input.join("")])
-				level = Steam::Player.steam_level(id.join("") )
-				event.respond( input.join(" ") + "'s steam level is **" + level.to_s + "**")
-			end
-
-			rescue => e
-				event.respond("Sorry, I couldn't find that player. Are they registered?")
-			end
-
+		end
 	end
-
 end
 
 
-@bot.command :league do |event|
+#League Command
+@bot.command(:league, description: "Does nothing atm", usage: "league") do |event|
 	nil
 end
 
 
-#Configure command
-@bot.command([:configure, :config], description: "Use this to configure Zephbot! \nExample: ;config Minecraft ZephyrusHD",
-					usage: $CONFIG['prefix'] + "config <list> <your_username_here>") do |event, game, *info|
+#Configure Command
+@bot.command([:configure, :config], description: "Use this to configure Zephbot \nExample: ;config Minecraft ZephyrusHD",
+					usage: $CONFIG['prefix'] + "config <game> <username>") do |event, game, *info|
+	#clean vars so you don't get other peoples input
 	reset_sql_vars
-	#info.delete! '()\"{};!@$%^&*|,'
 
 	#Prep vars for registering/checking
 	$id_SQL		= event.user.id
@@ -78,20 +82,16 @@ end
 				VALUES (?, ?)", [$id_SQL, $un_SQL])
 
 	if !event.channel.private?
-		p Time.now.to_s + " " + event.user.name + " ran this in a public channel"
+		@logger.debug event.user.name + "|PUBLIC|  :config " + game.to_s + " " + info.join() 
 		event.respond("Please configure me in private! I'll message you to make it easy :)")
 		event.user.pm("Hey there! Run ;help config to see how to use this command!")
 	else
-		p Time.now.to_s + " " + event.user.name + " ran this in a private channel"
+		@logger.debug event.user.name + "|PRIVATE| :config " + game.to_s + " " + info.join() 
 
 		if game == nil
-
-			#If no game is provided
 			event.respond("Thank you for configuring me. I can be re-configured at any time :) ")
-
 		else
-
-			#Downcase for readability
+			#Downcase for so case doesnt matter
 			game = game.downcase()
 
 			case game
@@ -103,18 +103,15 @@ end
 						begin
 							event.respond("Minecraft Username set to " + info.join(" "))
 							uuid = JSON.parse(RestClient.get("http://minecraft-techworld.com/admin/api/uuid?action=uuid&username=" + info.join("")))
-							p uuid
+							
 							#Format uuid string
 							uuidstring = uuid['output']
-							p uuidstring
 							uuidstring.delete! '-'
-							p uuidstring
 							@db.execute("UPDATE players SET MCUN = ?, MCUUID = ? WHERE DISCORDID = ?", [$mc_SQL, uuidstring, $id_SQL])
-							#event.server(210829146903937024).member(event.user.id).add_role(212053760971767808)
 							@bot.server(210829146903937024).member(event.user.id).add_role(212053760971767808)
 
 						rescue => e
-							p e
+							@logger.error e
 							event.respond("stop trying 2 break my bot pls")
 						end
 					end
@@ -126,7 +123,6 @@ end
 					else
 						event.respond("Steam Username set to " + info.join(" "))
 						sid = Steam::User.vanity_to_steamid(info.join(""))
-						p sid
 						@db.execute("UPDATE players SET STEAMID = ?, STEAM64 = ? WHERE DISCORDID = ?", [$steam_SQL, sid, $id_SQL])
 					end
 
@@ -154,14 +150,10 @@ end
 				else
 					event.respond("Sorry! That's not a valid game. Please ;config list to see avaliable games!")
 				end
-
-
 		#if game == nil end
 		end
-
 	#is pm end
 	end
-
 	#Fixes [] printout
 	nil
 #End of command

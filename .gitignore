@@ -2,3 +2,7 @@ config.yaml
 libsodium.dll
 opus.dll
 discord.db
+logs/
+cacert.pem
+sh.exe.stackdump
+ZephBot
