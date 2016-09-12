@@ -6,5 +6,10 @@ logs/
 cacert.pem
 sh.exe.stackdump
 ZephBot
+<<<<<<< HEAD
 songs/
 Gemfile.lock
+=======
+Gemfile.lock
+songs/
+>>>>>>> feature/TheMusicProject
