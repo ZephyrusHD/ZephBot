@@ -1,3 +1,11 @@
+
+#===================================================================#
+#                    YOUTUBE MUSIC PLAYER SECTION					#
+# Credit to PoVa/sapphire_bot for helping me figure out what to do! #
+#===================================================================#
+
+
+
 require_relative 'DBCommon'
 
 require 'youtube-dl'
@@ -12,11 +20,11 @@ DOWNLOAD_OPTIONS = {
 
 
 #Song Command
-@bot.command([:meme, :song], description: "Play a meme from the master meme database", 
-	usage: "meme <song_name>")	do |event, song, name, *saveas|
-	@logger.debug event.user.name + " :meme " + song.to_s
+@bot.command([:meme, :song], description: "Play a song!", 
+	usage: "song <command> <url> <name>")	do |event, song, name, *saveas|
+	@logger.debug event.user.name + " :song " + song.to_s + " " + name + " " + saveas.join(" ")
 	if song == nil
-		event.respond("Please provide a song, or run ```meme list```")
+		event.respond("Please provide a song, or run ```song list```")
 	else
 		song.downcase!()
 		begin		
@@ -34,9 +42,17 @@ DOWNLOAD_OPTIONS = {
 							@bot.voice_connect(event.user.voice_channel.id)
 							voice_bot = event.voice
 
-							#Set volume to something resonable and play file
+							voice_bot.adjust_average = true
+							#voice_bot.adjust_debug = false
+							voice_bot.adjust_interval = 2	#2
+							voice_bot.adjust_offset = 1		#1
+
+							#voice_bot.length_override = 20		#1
 							voice_bot.volume = 0.1
-							voice_bot.play_file(value)
+							voice_bot.play_io(open(value))
+							#Set volume to something resonable and play file
+							#voice_bot.volume = 0.0
+							#voice_bot.play_file(value)
 							return 
 						end
 					end
@@ -74,11 +90,12 @@ DOWNLOAD_OPTIONS = {
 		rescue => e
 			if e.message.include?("undefined method")
 				event.respond("Are you in a voice channel?")
+				@logger.error e
 			elsif e.message.include?("unexpected return")
 				#Let song end quietly
 				nil
 			else
-				event.respond(e)
+				@logger.error e
 				event.respond("w0t")
 			end
 		end
@@ -86,6 +103,18 @@ DOWNLOAD_OPTIONS = {
 	end
 
 	nil
+end
+
+
+
+#Queue Command
+@bot.command(:queue) do |event, action, *song|
+	@logger.debug event.user.name + " :queue " + action + " " + song.join(" ")
+	if action == nil
+		event.respond("Please provide an action")
+	else
+
+	end
 end
 
 
@@ -120,21 +149,4 @@ end
 	end
 	#Be quiet
 	nil
-end
-
-
-#===================================================================#
-#                    YOUTUBE MUSIC PLAYER SECTION					#
-# Credit to PoVa/sapphire_bot for helping me figure out what to do! #
-#===================================================================#
-
-
-
-@bot.command(:songdl ) do |event, song, name|
-@logger.debug event.user.name + " :song " + song.to_s + " " + name.to_s
-	if song == nil
-		nil
-	else
-
-	end
 end
