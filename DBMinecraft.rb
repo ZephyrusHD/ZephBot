@@ -87,8 +87,7 @@ end
 			else
 				msg += serv['Players']['list'][x] + "\n"
 			end
-
-			p "element " + x.to_s + " complete" 
+			
 			x += 1
 			sleep(0.1)
 		end

@@ -6,3 +6,4 @@ logs/
 cacert.pem
 sh.exe.stackdump
 ZephBot
+Gemfile.lock
