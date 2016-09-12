@@ -44,7 +44,7 @@ end
 
 
 #Actually /run/ the bot
-#@bot.debug = true
+@bot.debug = true
 #Gateway message serves as better indication when bot is running
 #becuase there is a delay when this message is ran to when the bot is able to accept commands
 @bot.run

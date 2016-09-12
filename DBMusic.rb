@@ -17,18 +17,18 @@ DOWNLOAD_OPTIONS = {
 	format: :bestaudio
 }
 
-
+songArray = Dir["songs/*.mp3"]
 
 #Song Command
 @bot.command([:meme, :song], description: "Play a song!", 
-	usage: "song <command> <url> <name>")	do |event, song, name, *saveas|
-	@logger.debug event.user.name + " :song " + song.to_s + " " + name + " " + saveas.join(" ")
+	usage: "song <command> <url> <name>")	do |event, song, name, saveas|
+	@logger.debug event.user.name + " :song " + song.to_s + " " + name + " " + saveas.to_s
 	if song == nil
 		event.respond("Please provide a song, or run ```song list```")
 	else
 		song.downcase!()
 		begin		
-			#Create array of every .mp3 in the songs dir
+			#Update array of every .mp3 in the songs dir
 			#songArray = Dir["songs/*.mp3"]
 			songArray = Dir["songs/*.mp3"]
 
@@ -42,17 +42,21 @@ DOWNLOAD_OPTIONS = {
 							@bot.voice_connect(event.user.voice_channel.id)
 							voice_bot = event.voice
 
-							voice_bot.adjust_average = true
+							#voice_bot.adjust_average = true
 							#voice_bot.adjust_debug = false
-							voice_bot.adjust_interval = 2	#2
-							voice_bot.adjust_offset = 1		#1
+							#voice_bot.adjust_interval = 2	#2
+							#voice_bot.adjust_offset = 1		#1
 
 							#voice_bot.length_override = 20		#1
 							voice_bot.volume = 0.1
-							voice_bot.play_io(open(value))
+							
+							#voice_bot.play_io(open(value))
+							
+
 							#Set volume to something resonable and play file
 							#voice_bot.volume = 0.0
-							#voice_bot.play_file(value)
+							voice_bot.play_dca("songs/BlocParty.dca")
+							#voice_bot.play_file("songs/nyancat.mp3")
 							return 
 						end
 					end
@@ -72,10 +76,8 @@ DOWNLOAD_OPTIONS = {
 					if name == nil
 						event.respond("Please provide a song!")
 					else
-						saveas = saveas.join(" ")
-						p saveas
 						#pls remember to sanatize input
-						if saveas == ""
+						if saveas == nil
 							event.respond("Please provide a name to save this song as")
 						else
 							download_options = DOWNLOAD_OPTIONS.clone
@@ -106,15 +108,54 @@ DOWNLOAD_OPTIONS = {
 end
 
 
-
 #Queue Command
-@bot.command(:queue) do |event, action, *song|
-	@logger.debug event.user.name + " :queue " + action + " " + song.join(" ")
+@bot.command(:queue) do |event, action, song|
+	@logger.debug event.user.name + " :queue " + action + " " + song
+	#queueFile = File.open("queue.txt", )
 	if action == nil
 		event.respond("Please provide an action")
 	else
+		case action
+			when "list"
+				event << "»"
+				File.readlines("queue.txt").each do |line|
+					line.slice!("\n")
+					event << line
+				end
+				nil
 
+			when "clear" #Just del file
+				event.respond("Queue cleared")
+				queueFile = File.open("queue.txt", "r+")
+					queueFile.close
+
+			when "add"
+				if song == nil
+					event.respond("Please provide a song!")
+				else
+					songArray.each do |value|
+						if value.include? (song)
+							queueFile = File.open("queue.txt", "a")
+							queueFile.syswrite(song + "\n")
+							queueFile.close
+							event.respond(song + " added to queue")
+							return
+						end
+					end
+					event.respond("Couldn't add to queue")
+
+
+				end
+
+			when "remove"
+				event.respond("Song removed")
+				queueFile = File.open("queue.txt", "r+")
+					queueFile.close
+
+		end
 	end
+
+
 end
 
 
