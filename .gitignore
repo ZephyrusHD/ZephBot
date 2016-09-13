@@ -6,6 +6,7 @@ logs/
 cacert.pem
 sh.exe.stackdump
 ZephBot
+queue.txt
 <<<<<<< HEAD
 songs/
 Gemfile.lock

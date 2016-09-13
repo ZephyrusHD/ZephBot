@@ -22,7 +22,7 @@ songArray = Dir["songs/*.mp3"]
 #Song Command
 @bot.command([:meme, :song], description: "Play a song!", 
 	usage: "song <command> <url> <name>")	do |event, song, name, saveas|
-	@logger.debug event.user.name + " :song " + song.to_s + " " + name + " " + saveas.to_s
+	@logger.debug event.user.name + " :song " + song.to_s + " " + name.to_s + " " + saveas.to_s
 	if song == nil
 		event.respond("Please provide a song, or run ```song list```")
 	else
@@ -41,22 +41,15 @@ songArray = Dir["songs/*.mp3"]
 							#connect bot to command issuer's voice channel
 							@bot.voice_connect(event.user.voice_channel.id)
 							voice_bot = event.voice
-
+							
 							#voice_bot.adjust_average = true
-							#voice_bot.adjust_debug = false
 							#voice_bot.adjust_interval = 2	#2
 							#voice_bot.adjust_offset = 1		#1
 
-							#voice_bot.length_override = 20		#1
-							voice_bot.volume = 0.1
-							
-							#voice_bot.play_io(open(value))
-							
-
-							#Set volume to something resonable and play file
-							#voice_bot.volume = 0.0
-							voice_bot.play_dca("songs/BlocParty.dca")
-							#voice_bot.play_file("songs/nyancat.mp3")
+							@bot.voice_connect(event.user.voice_channel.id)
+							voice_bot = event.voice
+							voice_bot.volume = 0.1							
+							voice_bot.play_file(value)
 							return 
 						end
 					end
@@ -82,8 +75,7 @@ songArray = Dir["songs/*.mp3"]
 						else
 							download_options = DOWNLOAD_OPTIONS.clone
 							download_options[:output] = "songs/" + saveas + ".mp3"
-							vid_id = name
-							YoutubeDL.download("https://www.youtube.com/watch?v=" + vid_id, download_options)
+							YoutubeDL.download("https://www.youtube.com/watch?v=" + name, download_options)
 							event.respond("Song Download complete. Saved as " + saveas)
 						end
 					end
@@ -110,8 +102,8 @@ end
 
 #Queue Command
 @bot.command(:queue) do |event, action, song|
-	@logger.debug event.user.name + " :queue " + action + " " + song
-	#queueFile = File.open("queue.txt", )
+	@logger.debug event.user.name + " :queue " + action.to_s + " " + song.to_s
+
 	if action == nil
 		event.respond("Please provide an action")
 	else
@@ -122,12 +114,15 @@ end
 					line.slice!("\n")
 					event << line
 				end
+				#be quiet
 				nil
 
-			when "clear" #Just del file
+			when "clear"
 				event.respond("Queue cleared")
-				queueFile = File.open("queue.txt", "r+")
-					queueFile.close
+				File.delete("queue.txt")
+				file = File.new("queue.txt", "a")
+				file.close()
+
 
 			when "add"
 				if song == nil
@@ -143,19 +138,49 @@ end
 						end
 					end
 					event.respond("Couldn't add to queue")
-
-
 				end
 
 			when "remove"
-				event.respond("Song removed")
-				queueFile = File.open("queue.txt", "r+")
-					queueFile.close
+				if song == nil
+					event.respond("Please provide a song!")
+				else
+					songArray.each do |value|
+						if value.include? (song)
+							queueArray = File.readlines("queue.txt")
+							new_value = value
+							new_value.slice! "songs/"
+							new_value.slice! ".mp3"
+							queueArray.delete(new_value + "\n")
 
+							File.delete("queue.txt")
+							queueArray.each do |each_song|
+								queueFile = File.open("queue.txt", "a")
+								queueFile.syswrite(each_song)
+								queueFile.close
+							end							
+							event.respond(song + " removed to queue")
+							return
+						end
+					end
+					event.respond("Couldn't remove song from queue")
+				end
+
+			when "play"
+				queueArray = File.readlines("queue.txt")
+				if queueArray == "[]"
+					event.respond("Nothing in queue!")
+				else
+					queueArray.each do |song_name|
+						@bot.voice_connect(event.user.voice_channel.id)
+						voice_bot = event.voice
+						voice_bot.volume = 0.1		
+						song_name.slice!("\n")					
+						event.respond("Now playing" + song_name)
+						voice_bot.play_file("songs/" + song_name + ".mp3")
+					end
+				end
 		end
 	end
-
-
 end
 
 
@@ -164,7 +189,7 @@ end
 	@logger.debug event.user.name + " :volume " + vol.to_s
 	voice_bot = event.voice
 	voice_bot.volume = (vol.to_f/100).abs
-
+	#be quiet
 	nil
 end
 
