@@ -14,8 +14,8 @@ require_relative 'DBMisc'
 	@bot.set_role_permission(210829888066813965,	100)	#Owner
 	@bot.set_role_permission(210832404636631040,	 99)	#Admin
 	@bot.set_role_permission(210830743771938817, 	 50)	#Mod
-	@bot.set_role_permission(210832674623848460, 	 50)	#Staff
-	@bot.set_role_permission(211539951974612992, 	 50)	#Media Manager
+	@bot.set_role_permission(210832674623848460, 	 49)	#Staff
+	@bot.set_role_permission(211539951974612992, 	 49)	#Media Manager
 	@bot.set_role_permission(212054054296092672,	 25)	#Veteran
 	@bot.set_role_permission(210829146903937024,	  1)	#@everyone
 
@@ -23,7 +23,7 @@ require_relative 'DBMisc'
 	@bot.game = ($CONFIG['status'])
 
 	#Avatar
-	event.bot.profile.avatar = open("http://i.imgur.com/2UzHz5T.png")
+	event.bot.profile.avatar = open($CONFIG['avatarurl'])
 end
 
 

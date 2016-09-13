@@ -1,5 +1,5 @@
 require_relative 'DBCommon'
-
+require 'RubyMinecraft'
 
 #sql?
 #List of servers
@@ -89,7 +89,7 @@ end
 			end
 			
 			x += 1
-			sleep(0.1)
+			#sleep(0.1)
 		end
 
 		event << msg
@@ -120,5 +120,18 @@ end
 	else
 		url = "https://www.dropbox.com/s/7eqhrwywihni734/Players.zip?dl=0"
 		event.user.pm("Hey there! Here's the URL for the latest player download: " + url)
+	end
+end
+
+
+#Rcon Command
+@bot.command(:rcon, permission_level: 50) do |event, *arg|
+	rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
+	rcon.auth($CONFIG['rconpass'])
+
+	if arg.join("") == "[]"
+		event.respond("Please enter a command")
+	else
+		rcon.command(arg.join(" "))
 	end
 end
