@@ -6,6 +6,10 @@ require_relative 'DBMusic'
 require_relative 'DBMisc'
 
 
+startTime = nil
+@logger.debug ("Start time nil")
+
+
 #On startup
 @bot.ready do |event|
 	#Perms
@@ -21,6 +25,44 @@ require_relative 'DBMisc'
 	@bot.game = ($CONFIG['status'])
 
 	event.bot.profile.avatar = open($CONFIG['avatarurl'])
+
+	#Create inital time for heartbeat
+	startTime = Time.new
+	@logger.debug("Time Init")
+
+	#@db.execute("U")
+end
+
+
+#Every heartbeat
+@bot.heartbeat do |event|
+	newTime = Time.new	
+	time_elapsed = newTime.to_i - startTime.to_i
+
+	#Do only if time isn't weird
+	if time_elapsed >= 600 || time_elapsed <=5
+		nil
+	else
+		@logger.debug("Pitter Patter: " + time_elapsed.to_s)
+
+
+		@servers.each do |key, value|
+			serv = JSON.parse(RestClient.get("https://mcapi.ca/query/" + value + "/list"))
+			playerson = serv['Players']['list']
+			
+			if playerson == false
+				nil
+			else
+				playerson.each do |player|
+					@db.execute("UPDATE players SET TIMEPLAYED = TIMEPLAYED + ? WHERE MCUN = ?", [time_elapsed, player])
+				end
+			end
+			
+		end
+	end
+	#Do these last
+	startTime = Time.at(newTime.to_i)
+	nil
 end
 
 

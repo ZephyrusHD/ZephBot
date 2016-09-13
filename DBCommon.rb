@@ -6,6 +6,15 @@ require 'yaml'
 require 'discordrb'
 require 'logging'
 
+
+#List of servers
+@servers = { 
+	"avant" => "rr3.re-renderreality.net:25565", 
+	"infinity" => "rr3.re-renderreality.net:25566" 
+	#{}"vanilla"=> "rr3.re-renderreality.net:25570"
+
+}
+
 #new filename
 logfile = "logs/" + Time.new.strftime("%Y-%m-%d %H_%M_%S") + ".log"
 

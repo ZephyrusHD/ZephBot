@@ -5,16 +5,11 @@ require 'RubyMinecraft'
 
 #sql?
 #List of servers
-servers = { 
-	"avant" => "rr3.re-renderreality.net:25565", 
-	"infinity" => "rr3.re-renderreality.net:25566", 
-	"vanilla"=> "rr3.re-renderreality.net:25570"
 
-}
 
 #init server string
 serverNamesConcat = String.new
-servers.each do |key, value|
+@servers.each do |key, value|
 	serverNamesConcat += "|"+key.to_s
 end
 #trim leading |
@@ -52,7 +47,7 @@ end
 		#list servers
 		if server == "list"	then 
 			event << "»"
-			servers.each do |key, value|
+			@servers.each do |key, value|
 				event << (key + " | " + value)
 			end
 			return
@@ -65,8 +60,8 @@ end
 		end
 
 		# map lookup
-		if servers.has_key?(server) then
-			serv_url = servers[server]
+		if @servers.has_key?(server) then
+			serv_url = @servers[server]
 		else
 			serv_url = server
 		end

@@ -70,7 +70,7 @@ end
 
 
 #Configure Command
-@bot.command([:configure, :config], description: "Use this to configure Zephbot \nExample: ;config Minecraft ZephyrusHD",
+@bot.command([:configure, :config, :register], description: "Use this to configure Zephbot \nExample: ;config Minecraft ZephyrusHD",
 					usage: $CONFIG['prefix'] + "config <game> <username>") do |event, game, *info|
 	#clean vars so you don't get other peoples input
 	reset_sql_vars
@@ -79,13 +79,14 @@ end
 	$id_SQL		= event.user.id
 	$un_SQL 	= event.user.name
 
-	@db.execute("INSERT OR IGNORE INTO players(DISCORDID, DISCORDUN)
-				VALUES (?, ?)", [$id_SQL, $un_SQL])
+	@db.execute("INSERT OR IGNORE INTO players(DISCORDID, DISCORDUN, TIMEPLAYED)
+				VALUES (?, ?, ?)", [$id_SQL, $un_SQL, 0])
 
 	if !event.channel.private?
 		@logger.debug event.user.name + "|PUBLIC|  :config " + game.to_s + " " + info.join() 
 		event.respond("Please configure me in private! I'll message you to make it easy :)")
-		event.user.pm("Hey there! Run ;help config to see how to use this command!")
+		event.user.pm("Hey there! Run ;help config to see how to use this command!\n
+			The easy way is just ;config Minecraft <Your_Username>")
 	else
 		@logger.debug event.user.name + "|PRIVATE| :config " + game.to_s + " " + info.join() 
 

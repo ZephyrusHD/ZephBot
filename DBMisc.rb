@@ -59,10 +59,10 @@ end
 @bot.command([:prune, :purge], description: "Prunes last 100 messages in this channel.", 
 			usage: "prune|purge", permission_level: 99) do |event, num|
 	@logger.debug event.user.name + " :prune " + num.to_s
-	if num == nil
+	if num == nil || num <= 0 || num > 100
 		num = 100
 	end
-	event.channel.prune(num)
+	event.channel.prune(num.to_i)
 end
 
 
