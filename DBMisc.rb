@@ -1,8 +1,10 @@
 require_relative 'DBCommon'
 
+@bot.bucket :misc, limit: 3, time_span: 60, delay: 10
+@bot.bucket :kappa, limit: 1, time_span: 600, delay: 600
 
 #Events Command
-@bot.command :events, description: "Lists events", usage: "events" do |event|
+@bot.command :events, bucket: :misc, rate_limit_message: "Avaliable in %time% seconds!",description: "Lists events", usage: "events" do |event|
 	@logger.debug event.user.name + " :event"
 	event << "»"
 	event << "-Re-Render Reality Event list-"
@@ -13,13 +15,14 @@ end
 
 
 #Lmgtfy Command
-@bot.command([:lmgtfy, :google], description: "Googles whatever you ask it to", usage: "lmgtfy <text>" ) do |event, *text|
+@bot.command([:lmgtfy, :google], bucket: :misc, rate_limit_message: "Avaliable in %time% seconds!",description: "Googles whatever you ask it to", usage: "lmgtfy <text>" ) do |event, *text|
 	@logger.debug event.user.name + " :lmgtfy " + text.join()
 	event.respond("http://lmgtfy.com/?q=#{text.join('+')}")
 end
 
+
 #List Roles Command
-@bot.command(:listroles, description: "Print role IDs", usage: "listroles", permission_level: 101) do |event|
+@bot.command(:listroles, bucket: :misc, rate_limit_message: "Avaliable in %time% seconds!", description: "Print role IDs", usage: "listroles", permission_level: 101) do |event|
 	@logger.debug event.user.name + " :listroles"
 	start = 0
 	num = event.server.roles.length
@@ -36,7 +39,7 @@ end
 
 
 #Ping Command
-@bot.command(:ping, description: 'Responds with... Something', usage: "ping") do |event|
+@bot.command(:ping, bucket: :misc, rate_limit_message: "Avaliable in %time% seconds!", description: 'Responds with... Something', usage: "ping") do |event|
 	@logger.debug event.user.name + " :ping"
 	testVar = "#{((Time.now - event.timestamp) * 1000).to_i}ms."
 	event.respond(testVar)
@@ -44,7 +47,7 @@ end
 
 
 #Random Command
-@bot.command(:random, description: "Responds with a number between two numbers",
+@bot.command(:random, bucket: :misc, rate_limit_message: "Avaliable in %time% seconds!", description: "Responds with a number between two numbers",
 usage: "random <x> <y>", min_arg: 2, max_args: 2) do |event, min, max|
 	@logger.debug event.user.name + " :random " + min.to_s + " " + max.to_s
 	result = min.to_i < max.to_i ? rand(min.to_i .. max.to_i) : rand(max.to_i .. min.to_i)
@@ -64,7 +67,7 @@ end
 
 
 #Ban Command
-@bot.command(:ban, description: "Spams with Banning Epiic_Thundercat", usage: "ban") do |event|
+@bot.command(:ban, bucket: :misc, rate_limit_message: "Avaliable in %time% seconds!", description: "Spams with Banning Epiic_Thundercat", usage: "ban") do |event|
 	@logger.debug event.user.name + " :ban"
 	for i in 0..10 do 
 		event.respond(";BAN EPIIC_THUNDERCAT")
@@ -74,7 +77,7 @@ end
 
 
 #Kappa Command
-@bot.command(:kappa, description: "Sends TTS Kappa poem", usage: "kappa") do |event|
+@bot.command(:kappa, bucket: :kappa, rate_limit_message: "Ur such a l33t tr011 u g0tta wa1t %time% m0r3 53c0nd5!",description: "Sends TTS Kappa poem", usage: "kappa") do |event|
 	@logger.debug event.user.name + " :kappa"
 	event.channel.send_message(" 
 		For sen is love, 

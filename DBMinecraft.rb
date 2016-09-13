@@ -1,6 +1,8 @@
 require_relative 'DBCommon'
 require 'RubyMinecraft'
 
+@bot.bucket :minecraft, limit: 5, time_span: 10, delay: 2
+
 #sql?
 #List of servers
 servers = { 
@@ -20,7 +22,7 @@ serverNamesConcat[0] = ''
 
 
 #Serverinfo Command
-@bot.command(:serverinfo, description: "Lists server info", 
+@bot.command(:serverinfo, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", description: "Lists server info", 
 	usage: "serverinfo") do |event|
 	@logger.debug event.user.name + " :serverinfo"
 	event << "»"
@@ -35,7 +37,7 @@ end
 
 
 #Online Command
-@bot.command :online, description: "Check how many people are currently on the specified server", usage: "online "+serverNamesConcat do |event, server| 
+@bot.command :online, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", description: "Check how many people are currently on the specified server", usage: "online "+serverNamesConcat do |event, server| 
 	@logger.debug event.user.name + " :online " + server.to_s
 	begin
 		serv_url = "rr3.re-renderreality.net"
@@ -108,7 +110,7 @@ end
 
 
 #Package Command
-@bot.command(:package, description: "PM's the user the download package", usage: "package") do |event|
+@bot.command(:package, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", description: "PM's the user the download package", usage: "package") do |event|
 	@logger.debug event.user.name + " :package"
 	file = File.read('staff.json')
 	staff = JSON.parse(file)
@@ -125,7 +127,8 @@ end
 
 
 #Rcon Command
-@bot.command(:rcon, permission_level: 50) do |event, *arg|
+@bot.command(:rcon, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", permission_level: 50) do |event, *arg|
+	@logger.debug event.user.name + " :rcon " + arg.join(" ")
 	rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
 	rcon.auth($CONFIG['rconpass'])
 

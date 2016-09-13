@@ -5,7 +5,6 @@ require_relative 'DBApis'
 require_relative 'DBMusic'
 require_relative 'DBMisc'
 
-@ZephCoder = Opus::Encoder.new(48_000, 960, 2)
 
 #On startup
 @bot.ready do |event|
@@ -19,10 +18,8 @@ require_relative 'DBMisc'
 	@bot.set_role_permission(212054054296092672,	 25)	#Veteran
 	@bot.set_role_permission(210829146903937024,	  1)	#@everyone
 
-	#Status. "Playing..."
 	@bot.game = ($CONFIG['status'])
 
-	#Avatar
 	event.bot.profile.avatar = open($CONFIG['avatarurl'])
 end
 
@@ -30,16 +27,18 @@ end
 #Eval Command
 @bot.command(:eval, description: "Run any code you want!!!", usage: "eval *code here*") do |event, *code|
 	@logger.warn event.user.name + " :eval " + code.join()
+
 	if event.server.id.to_s == "222813624320655360" then 
    		@bot.set_user_permission(110907958824538112, 	101)	#coldie perms on his server only
     end
-  break unless event.user.id == 109517845678809088 || (event.server.id.to_s == "222813624320655360" && event.user.id == 110907958824538112)  # Replace number with your ID
-  begin
-    eval code.join(' ')
-  rescue => e
-    event.respond("You suck.")
-    @logger.error e
-  end
+
+	break unless event.user.id == 109517845678809088 || (event.server.id.to_s == "222813624320655360" && event.user.id == 110907958824538112)  # Replace number with your ID
+ 		begin
+    		eval code.join(' ')
+  		rescue => e
+    		event.respond("You suck.")
+    		@logger.error e
+ 		 end
 end
 
 

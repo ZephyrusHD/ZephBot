@@ -4,7 +4,7 @@
 # Credit to PoVa/sapphire_bot for helping me figure out what to do! #
 #===================================================================#
 
-
+@bot.bucket :music, limit: 5, time_span: 10, delay: 2
 
 require_relative 'DBCommon'
 
@@ -20,7 +20,7 @@ DOWNLOAD_OPTIONS = {
 songArray = Dir["songs/*.mp3"]
 
 #Song Command
-@bot.command([:meme, :song], description: "Play a song!", 
+@bot.command([:meme, :song], bucket: :music, rate_limit_message: "Avaliable in %time% seconds!", description: "Play a song!", 
 	usage: "song <command> <url> <name>")	do |event, song, name, saveas|
 	@logger.debug event.user.name + " :song " + song.to_s + " " + name.to_s + " " + saveas.to_s
 	if song == nil
@@ -101,7 +101,7 @@ end
 
 
 #Queue Command
-@bot.command(:queue) do |event, action, song|
+@bot.command(:queue, bucket: :music, rate_limit_message: "Avaliable in %time% seconds!") do |event, action, song|
 	@logger.debug event.user.name + " :queue " + action.to_s + " " + song.to_s
 
 	if action == nil
@@ -185,7 +185,7 @@ end
 
 
 #Volume Command
-@bot.command(:volume, description: "Changes ZephBot's volume", usage: "volume <0-100>") do |event, vol|
+@bot.command(:volume, bucket: :music, rate_limit_message: "Avaliable in %time% seconds!", description: "Changes ZephBot's volume", usage: "volume <0-100>") do |event, vol|
 	@logger.debug event.user.name + " :volume " + vol.to_s
 	voice_bot = event.voice
 	voice_bot.volume = (vol.to_f/100).abs
@@ -195,7 +195,7 @@ end
 
 
 #Stop Command
-@bot.command(:stop, description: "Stops ZephBot's playback", usage: "stop") do |event|
+@bot.command(:stop, bucket: :music, rate_limit_message: "Avaliable in %time% seconds!", description: "Stops ZephBot's playback", usage: "stop") do |event|
 	@logger.debug event.user.name + " :stop"
 	voice_bot = event.voice
 	voice_bot.stop_playing
@@ -205,7 +205,7 @@ end
 
 
 #Leave command
-@bot.command(:leave, description: "Forces ZephBot to leave the channel", usage: "leave") do |event|
+@bot.command(:leave, bucket: :music, rate_limit_message: "Avaliable in %time% seconds!", description: "Forces ZephBot to leave the channel", usage: "leave") do |event|
 	@logger.debug event.user.name + " :leave"
 	begin
 		voice_bot = event.voice
