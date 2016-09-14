@@ -16,6 +16,17 @@ end
 serverNamesConcat[0] = ''
 
 
+def secondsToTime(time)
+	min,	sec = time.divmod(60)
+	hr,		min = min.divmod(60)
+	day,	hr 	= hr.divmod(24)
+	week, 	day = day.divmod(7)
+
+	array = [week,day,hr,min,sec]
+	return array
+end
+
+
 #Serverinfo Command
 @bot.command(:serverinfo, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", description: "Lists server info", 
 	usage: "serverinfo") do |event|
@@ -131,5 +142,84 @@ end
 		event.respond("Please enter a command")
 	else
 		rcon.command(arg.join(" "))
+	end
+end
+
+
+#Playtime Command
+@bot.command(:playtime) do |event, arg|
+	case arg
+		when nil
+			time = @db.execute("SELECT TIMEPLAYED FROM players WHERE DISCORDID = ?", [event.user.id])
+			time = time.join("")
+			time = time.to_i
+			timeArray = secondsToTime(time)
+			event.respond("»\n" + "You have played a total of: \n" + timeArray[0].to_s + " Weeks\n" + timeArray[1].to_s + 
+				" Days\n" + timeArray[2].to_s + " Hours\n" + timeArray[3].to_s + 
+				" Minutes\n" + timeArray[4].to_s + " Seconds.")
+
+		when "top"
+				timeArray = @db.execute("SELECT TIMEPLAYED, MCUN FROM players ORDER BY -TIMEPLAYED LIMIT 25")
+				event << "»"
+				x = 1
+				event << "```"
+
+				timeArray.each do |key, value|
+					#For Name Spacing
+					array = secondsToTime(key)
+					stringArray = value.scan /\w/
+					needToBe = 17 - stringArray.length
+
+					(1..needToBe).each do |thing|
+						stringArray << "\s"
+					end
+
+					#For Rank Spacing
+					rank = x.to_s
+					rank = rank.scan /\w/
+					needToBe = 4 - rank.length
+					(1..needToBe).each do |thing|
+						rank << "\s"
+					end
+
+					#For Time Spacing
+					y = 0 
+					while y < 5
+						if array[y] < 10
+							array[y] = "0" + array[y].to_s 
+						end
+						y = y + 1
+					end
+
+					event << rank.join("") + "| " + stringArray.join("") + "\t " + array[0].to_s + "W " + array[1].to_s + "D " + 
+					array[2].to_s + "H " + array[3].to_s + "M " + array[4].to_s + "S "
+					
+					x = x + 1
+				end
+
+				event << "```"
+				nil
+
+		when "harambe"
+			event.respond("Harambe did not get enough time in this world before he was taken from us.")
+
+		when "your_mom"
+			event.respond("AvaNight played your mom last night.")
+
+		else
+			time = @db.execute("SELECT TIMEPLAYED FROM players WHERE DISCORDUN = ? OR MCUN = ?", [arg, arg])
+			p time.to_s
+			if time == "[]"
+				event.respond("I couldn't find that player, or they haven't played!")
+			else
+				time = time.join()
+				time = time.to_i
+				timeArray = secondsToTime(time)
+				event.respond("»\n" + "You have played a total of: \n" + timeArray[0].to_s + " Weeks\n" + timeArray[1].to_s + 
+				" Days\n" + timeArray[2].to_s + " Hours\n" + timeArray[3].to_s + 
+				" Minutes\n" + timeArray[4].to_s + " Seconds.")
+			end
+
+
 	end
 end

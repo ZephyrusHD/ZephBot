@@ -90,3 +90,79 @@ end
 			Love, alex the seal",
 		tts = true)
 end
+
+
+#Dicks Command
+@bot.command(:dicks) do |event, dick_status|
+	@logger.debug event.user.name + " :dicks " + dick_status.to_s
+	if dick_status != nil
+		dick_status = dick_status.downcase()
+	end
+	case dick_status
+		when "in"
+			event.respond("Dicks are in for harambe :(")
+
+		when "out"
+			event.respond("DICKS OUT FOR HARAMBE")
+
+		when nil
+			event.respond("Dicks are currently at half mast")
+	end
+
+end
+
+
+#Harambe Command
+@bot.command(:harambe) do |event|
+	event.respond " Harambe died for our sins\n
+░░░░░░░▄▄▀▀▀▀▀▀▄▄░░░░░░░
+░░░░░▄▀░░░░░░░░░░▀▄░░░░░
+░░░▄▀░░░░░░░░░░░░░░▀▄░░░
+░░▄░░░░░░░░░░░░░░░░░░▄░░
+░▄░░░▄▄░░░░░░░░░░▄▄░░░▄░
+░░░░▌░░█░░░░░░░░▐░░█░░░░
+░▌░░▀██▀░▄████▄░▒▀██░░▐░
+░░░░▒▒▒▒░█▄▄▄▄█░▒▒▒▒░░░░
+░▀░░▒▒░░░░░░░░░░▒▒▒░░▀░░
+░░▀▄░▒░░░░░░░░░░▒▒░▄▀░░░
+░░░░▀▄▒░░░░░░░░░▒ ▄▀░░░░
+░░░░░░░▀▀▀▀▀▀▀▀▀▀░░░░░░░"
+end
+
+
+#Toucan Command
+@bot.command(:toucan) do |event|
+	event.respond("»
+░░░░░░░░▄▄▄▀▀▀▄▄███▄░░░░░░░░░░░░░░░░░
+░░░░░▄▀▀░░░░░░░▐░▀██▌░░░░░░░░░░░░░░░░
+░░░▄▀░░░░▄▄███░▌▀▀░▀█░░░░░░░░░░░░░░░░
+░░▄█░░▄▀▀▒▒▒▒▒▄▐░░░░█▌░░░░░░░░░░░░░░░
+░▐█▀▄▀▄▄▄▄▀▀▀▀▌░░░░░▐█▄░░░░░░░░░░░░░░
+░▌▄▄▀▀░░░░░░░░▌░░░░▄███████▄░░░░░░░░░
+░░░░░░░░░░░░░▐░░░░▐███████████▄░░░░░░
+░░░░░le░░░░░░░▐░░░░▐█████████████▄░░░
+░░░░toucan░░░░░░▀▄░░░▐██████████████▄
+░░░░░░has░░░░░░░░▀▄▄████████████████▄
+░░░░░arrived░░░░░░░░░░░░█▀██████░░░░░")
+end
+
+
+#ColdieBot Command
+@bot.command(:coldiebot) do |event|
+	event.respond("coldieBot is a great bot.
+░░░░░░░░░
+░░░░▄▀▀▀▀▀█▀▄▄▄▄░░░░
+░░▄▀▒▓▒▓▓▒▓▒▒▓▒▓▀▄░░
+▄▀▒▒▓▒▓▒▒▓▒▓▒▓▓▒▒▓█░
+█▓▒▓▒▓▒▓▓▓░░░░░░▓▓█░
+█▓▓▓▓▓▒▓▒░░░░░░░░▓█░
+▓▓▓▓▓▒░░░░░░░░░░░░█░
+▓▓▓▓░░░░▄▄▄▄░░░▄█▄▀░
+░▀▄▓░░▒▀▓▓▒▒░░█▓▒▒░░
+▀▄░░░░░░░░░░░░▀▄▒▒█░
+░▀░▀░░░░░▒▒▀▄▄▒▀▒▒█░
+░░▀░░░░░░▒▄▄▒▄▄▄▒▒█░
+░░░▀▄▄▒▒░░░░▀▀▒▒▄▀░░
+░░░░░▀█▄▒▒░░░░▒▄▀░░░
+░░░░░░░░▀▀█▄▄▄▄▀")
+end
