@@ -311,7 +311,8 @@ end
 @bot.command(:ranks) do |event|
 
 	event << "```"
-	event << "Rank:    | Hrs"
+	event << "Ranking  | Hrs"
+	event << "---------------"
 	@ranks.each do |key, value|
 		event << key.to_s + " | " + value.to_s
 	end
