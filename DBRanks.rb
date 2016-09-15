@@ -45,7 +45,7 @@ def doRanks()
 		x = 45#hours <=
 		new_rank = nil
 		catch :exit do
-			ranks.each do |rank, hrs|s
+			@ranks.each do |rank, hrs|s
 				if x < hrs
 					new_rank = rank
 					throw :exit
