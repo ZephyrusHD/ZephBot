@@ -309,7 +309,7 @@ end
 
 
 end
-description: "", usage: ""
+
 
 @bot.command(:ranks, description: "View In-Game ranks and requirements", usage: "ranks") do |event|
 
