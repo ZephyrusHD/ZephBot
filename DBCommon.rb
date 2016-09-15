@@ -21,6 +21,7 @@ require 'logging'
 
 }
 
+#test
 #List of ranks
 @ranks = { 
 
