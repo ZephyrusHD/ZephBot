@@ -321,9 +321,14 @@ end
 	end
 	event << ""
 	event << "Ranking  |    $"
+	event << "---------------"
 	event << "Emerald  |  <50"
 	event << "Ender    | <100"
-	event << "Void     | +100"
+	event << "Void     | >100"
+	event << ""
+	event << "Ranking  | Name"
+	event << "---------------"
+	event << "Draconic | Kilo"
 	event << "```"
 =begin
 	event << "Emerald <$50"
