@@ -133,7 +133,10 @@ end
 
 
 #Rcon Command
-@bot.command(:rcon, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", permission_level: 50) do |event, *arg|
+@bot.command(:rcon, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", 
+	permission_level: 50, description: "Allows commands to be sent directly to a MC server", 
+	usage: "rcon <command>") do |event, *arg|
+
 	@logger.debug event.user.name + " :rcon " + arg.join(" ")
 	rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
 	rcon.auth($CONFIG['rconpass'])
@@ -147,7 +150,7 @@ end
 
 
 #Whitelist Command
-@bot.command(:whitelist, permission_level: 50) do |event, name|
+@bot.command(:whitelist, permission_level: 50, description: "Whitelists people from within Discord", usage: "whitelist <username>") do |event, name|
     @logger.debug event.user.name + " :whitelist " + name.to_s
     rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
     rcon.auth($CONFIG['rconpass'])
@@ -160,7 +163,7 @@ end
 end
 
 #Playtime Command
-@bot.command(:playtime) do |event, arg|
+@bot.command(:playtime, description: "Look at someones playtime!", usage: "playtime nil|top|<username>") do |event, arg|
 	case arg
 		when nil
 			time = @db.execute("SELECT TIMEPLAYED FROM players WHERE DISCORDID = ?", [event.user.id])
@@ -238,7 +241,7 @@ end
 end
 
 
-@bot.command(:event) do |event, team|
+@bot.command(:event, description: "Lists team/event information", usage: "event nil|list|current") do |event, team|
 	@logger.debug event.user.name + " :event " + team.to_s
 
 	user_team = @db.execute("SELECT EVENTTEAM FROM players WHERE DISCORDID = ?", [event.user.id])
@@ -306,31 +309,23 @@ end
 
 
 end
+description: "", usage: ""
 
-
-@bot.command(:ranks) do |event|
+@bot.command(:ranks, description: "View In-Game ranks and requirements", usage: "ranks") do |event|
 
 	event << "```"
-	event << "Ranking  | Hrs"
+	event << "Ranking  |  Hrs"
 	event << "---------------"
 	@ranks.each do |key, value|
-		event << key.to_s + " | " + value.to_s
+		event << key.to_s + " |  " + value.to_s
 	end
+	event << ""
+	event << "Ranking  |    $"
+	event << "Emerald  |  <50"
+	event << "Ender    | <100"
+	event << "Void     | +100"
 	event << "```"
 =begin
-	event << "»"
-	event << "Re-Render Reality Player Ranks"
-	event << "Wood - 0"
-	event << "Stone - 12"
-	event << "Iron - 20"
-	event << "Bronze - 40"
-	event << "Silver - 60"
-	event << "Gold - 100"
-	event << "Redstone - 140"
-	event << "Diamond - 180"
-	event << "Obsidian - 220"
-	event << "Bedrock - 260"
-	event << ""
 	event << "Emerald <$50"
 	event << "Ender <$100"
 	event << "Void +$100"
