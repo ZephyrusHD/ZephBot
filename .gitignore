@@ -7,6 +7,7 @@ cacert.pem
 sh.exe.stackdump
 ZephBot
 queue.txt
+staff.json
 <<<<<<< HEAD
 songs/
 Gemfile.lock
@@ -14,3 +15,4 @@ Gemfile.lock
 Gemfile.lock
 songs/
 >>>>>>> feature/TheMusicProject
+.idea/

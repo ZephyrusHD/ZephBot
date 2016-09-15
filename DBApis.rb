@@ -5,6 +5,7 @@ require 'lol'
 require_relative 'DBCommon'
 require_relative 'DBSQL'
 
+@bot.bucket :common, limit: 5, time_span: 10, delay: 2
 
 #League api setup
 ra = Lol::Client.new $CONFIG['leagueapi'], {region: "na"}
@@ -14,7 +15,7 @@ Steam.apikey = $CONFIG['steamapi']
 
 
 #Skin Command
-@bot.command(:skin, description: "Shows your or the specified player's skin", usage: "skin <username_optional>" )do |event, name|
+@bot.command(:skin, bucket: :common, rate_limit_message: "Avaliable in %time% seconds!", description: "Shows your or the specified player's skin", usage: "skin <username_optional>" )do |event, name|
 	@logger.debug event.user.username + " ran skin " + name.to_s
 	if name == nil
 	#Your skin
@@ -35,7 +36,7 @@ end
 
 
 #Steam Command
-@bot.command(:steam, description: "Shows various information related to steam", usage: "steam level <username_optional>") do |event, arg, *input|
+@bot.command(:steam, bucket: :common, rate_limit_message: "Avaliable in %time% seconds!", description: "Shows various information related to steam", usage: "steam level <username_optional>") do |event, arg, *input|
 	@logger.debug event.user.username + " ran steam " + arg.to_s + " " + input.join()
 	if arg == nil
 		event.respond("try running ```steam level```")
@@ -63,13 +64,13 @@ end
 
 
 #League Command
-@bot.command(:league, description: "Does nothing atm", usage: "league") do |event|
+@bot.command(:league, bucket: :common, rate_limit_message: "Avaliable in %time% seconds!", description: "Does nothing atm", usage: "league") do |event|
 	nil
 end
 
 
 #Configure Command
-@bot.command([:configure, :config], description: "Use this to configure Zephbot \nExample: ;config Minecraft ZephyrusHD",
+@bot.command([:configure, :config, :register], description: "Use this to configure Zephbot \nExample: ;config Minecraft ZephyrusHD",
 					usage: $CONFIG['prefix'] + "config <game> <username>") do |event, game, *info|
 	#clean vars so you don't get other peoples input
 	reset_sql_vars
@@ -78,13 +79,14 @@ end
 	$id_SQL		= event.user.id
 	$un_SQL 	= event.user.name
 
-	@db.execute("INSERT OR IGNORE INTO players(DISCORDID, DISCORDUN)
-				VALUES (?, ?)", [$id_SQL, $un_SQL])
+	@db.execute("INSERT OR IGNORE INTO players(DISCORDID, DISCORDUN, TIMEPLAYED)
+				VALUES (?, ?, ?)", [$id_SQL, $un_SQL, 0])
 
 	if !event.channel.private?
 		@logger.debug event.user.name + "|PUBLIC|  :config " + game.to_s + " " + info.join() 
 		event.respond("Please configure me in private! I'll message you to make it easy :)")
-		event.user.pm("Hey there! Run ;help config to see how to use this command!")
+		event.user.pm("Hey there! Run ;help config to see how to use this command!\n
+			The easy way is just ;config Minecraft <Your_Username>")
 	else
 		@logger.debug event.user.name + "|PRIVATE| :config " + game.to_s + " " + info.join() 
 
