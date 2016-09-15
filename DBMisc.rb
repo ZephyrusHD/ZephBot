@@ -1,5 +1,6 @@
 require_relative 'DBCommon'
 
+
 @bot.bucket :misc, limit: 3, time_span: 60, delay: 10
 @bot.bucket :kappa, limit: 1, time_span: 600, delay: 600
 
@@ -166,3 +167,5 @@ end
 ░░░░░▀█▄▒▒░░░░▒▄▀░░░
 ░░░░░░░░▀▀█▄▄▄▄▀")
 end
+
+

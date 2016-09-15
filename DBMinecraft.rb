@@ -146,6 +146,19 @@ end
 end
 
 
+#Whitelist Command
+@bot.command(:whitelist, permission_level: 50) do |event, name|
+    @logger.debug event.user.name + " :whitelist " + name.to_s
+    rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
+    rcon.auth($CONFIG['rconpass'])
+
+    if name == nil
+        event.respond("No name provided")
+    else
+        rcon.command("whitelist add" + name.to_s)
+    end
+end
+
 #Playtime Command
 @bot.command(:playtime) do |event, arg|
 	case arg
@@ -222,4 +235,74 @@ end
 
 
 	end
+end
+
+
+@bot.command(:event) do |event, team|
+	@logger.debug event.user.name + " :event " + team.to_s
+
+	user_team = @db.execute("SELECT EVENTTEAM FROM players WHERE DISCORDID = ?", [event.user.id])
+	team1 = @db.execute("SELECT EVENTTEAM FROM players WHERE EVENTTEAM = 1 ")
+	team2 = @db.execute("SELECT EVENTTEAM FROM players WHERE EVENTTEAM = 2 ")
+
+	case team
+		when nil
+			if user_team.to_s == "[[nil]]"
+
+				if team1.length > team2.length
+					@db.execute("UPDATE players SET EVENTTEAM = ? WHERE DISCORDID = ?", ["2", event.user.id])
+					event.respond("You're on Team 2!")
+				else
+					@db.execute("UPDATE players SET EVENTTEAM = ? WHERE DISCORDID = ?", ["1", event.user.id])
+					event.respond("You're on Team 1!")
+				end
+
+			else
+				user_team = user_team.join("")
+				user_team.delete!("[[")
+				user_team.delete!("]]")
+				event.respond("You're already on Team " + user_team)
+		end
+
+		when "list"
+			team1players = @db.execute("SELECT MCUN FROM players WHERE EVENTTEAM = ?", ["1"])
+			team2players = @db.execute("SELECT MCUN FROM players WHERE EVENTTEAM = ?", ["2"])
+
+			event << "This is where the event title will go"
+			event << "This is where information about the event will go \n" +
+			"There might be a lot of it though, hopefully this will cover it!"
+
+			event << "```\n ---------TEAM 1---------"
+			team1players.each do |thing|
+				thing = thing.to_s
+				thing.delete!("[\"")
+				thing.delete!("\"]")
+				event << thing
+			end
+			event << "```"
+
+			event << "```\n ---------TEAM 2---------"
+			team2players.each do |thing|
+				thing = thing.to_s
+				thing.delete!("[\"")
+				thing.delete!("\"]")
+				event << thing
+			end
+			event << "```"
+
+		when "current"
+			event << "\nThe current event for Re-Render Reality is..."
+			event << "A PLACEHOLDER\n"
+			event << "In this event you will probably do things, such as write lorem impsum from the blood of your first born"
+			event << "Re-Render Reality would like to offer Maple Syrup to the winners!"
+			event << "Insert generic picture 1"
+			event << "Insert generic picture 2"
+			event << "Insert generic picture 3"
+			event << "Insert generic picture 4"
+
+
+
+	end
+
+
 end

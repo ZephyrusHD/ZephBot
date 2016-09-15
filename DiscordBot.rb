@@ -4,6 +4,8 @@ require_relative 'DBMinecraft'
 require_relative 'DBApis'
 require_relative 'DBMusic'
 require_relative 'DBMisc'
+require_relative 'DBReddit'
+require_relative 'DBGmail'
 
 
 startTime = nil
@@ -36,6 +38,10 @@ end
 
 #Every heartbeat
 @bot.heartbeat do |event|
+
+	doGmail()
+	doReddit()
+
 	newTime = Time.new	
 	time_elapsed = newTime.to_i - startTime.to_i
 
