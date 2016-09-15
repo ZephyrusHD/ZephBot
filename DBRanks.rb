@@ -40,30 +40,24 @@ require_relative 'DBCommon'
 
 p @ranks
 def doRanks()
-	begin
 	Thread.new{
 
-		#Get EVERY player from sql 
-		x = 45#hours <=
-		new_rank = nil
-		p "Got to doRanks"
-		catch :exit do
-			p "In Catch"
-			@ranks.each do |rank, hrs|s
-				if x < hrs
-					new_rank = rank
-					p new_rank.to_s
-					throw :exit
+		time_players = @db.execute("SELECT TIMEPLAYED, MCUN FROM players")
+		time_players.each do |seconds, user|
+
+			x = (seconds * 3600)
+			new_rank = nil
+
+			catch :exit do
+				@ranks.each do |rank, hrs|
+					if x < hrs.to_i
+						throw :exit if true
+					elsif
+						new_rank = rank
+					end
 				end
-				p "Not correct rank"
 			end
+
 		end
-		p new_rank.to_s
-
-		
-
 	}
-	rescue => e
-		p e
-	end
 end
