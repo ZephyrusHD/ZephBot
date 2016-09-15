@@ -310,9 +310,11 @@ end
 
 @bot.command(:ranks) do |event|
 
+	event << "```"
 	@ranks.each do |key, value|
 		event << key.to_s + " | " + value.to_s
 	end
+	event << "```"
 =begin
 	event << "»"
 	event << "Re-Render Reality Player Ranks"
