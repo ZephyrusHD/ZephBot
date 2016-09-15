@@ -306,3 +306,23 @@ end
 
 
 end
+
+
+@bot.command(:ranks) do |event|
+	event << "»"
+	event << "Re-Render Reality Player Ranks"
+	event << "Wood - 0"
+	event << "Stone - 12"
+	event << "Iron - 20"
+	event << "Bronze - 40"
+	event << "Silver - 60"
+	event << "Gold - 100"
+	event << "Redstone - 140"
+	event << "Diamond - 180"
+	event << "Obsidian - 220"
+	event << "Bedrock - 260"
+	event << ""
+	event << "Emerald <$50"
+	event << "Ender <$100"
+	event << "Void +$100"
+end
