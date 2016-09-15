@@ -40,6 +40,7 @@ end
 #Every heartbeat
 @bot.heartbeat do |event|
 
+	doRanks()
 	doGmail()
 	doReddit()
 
