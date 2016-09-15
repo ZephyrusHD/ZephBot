@@ -38,7 +38,9 @@ require_relative 'DBCommon'
 
 }
 
+p @ranks
 def doRanks()
+	begin
 	Thread.new{
 
 		#Get EVERY player from sql 
@@ -61,4 +63,7 @@ def doRanks()
 		
 
 	}
+	rescue => e
+		p e
+	end
 end
