@@ -1,5 +1,11 @@
 #Set important fixy things before requires
-::RBNACL_LIBSODIUM_GEM_LIB_PATH = "libsodium.dll"
+
+if Gem::Platform.local.os != " linux"
+	::RBNACL_LIBSODIUM_GEM_LIB_PATH = "libsodium.dll"
+end
+
+
+
 ENV["SSL_CERT_FILE"] = "cacert.pem"
 
 require 'yaml'
