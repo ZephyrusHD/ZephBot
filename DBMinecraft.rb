@@ -309,6 +309,11 @@ end
 
 
 @bot.command(:ranks) do |event|
+
+	@ranks.each do |key, value|
+		event << key.to_s + " | " + value.to_s
+	end
+=begin
 	event << "»"
 	event << "Re-Render Reality Player Ranks"
 	event << "Wood - 0"
@@ -325,4 +330,5 @@ end
 	event << "Emerald <$50"
 	event << "Ender <$100"
 	event << "Void +$100"
+=end
 end

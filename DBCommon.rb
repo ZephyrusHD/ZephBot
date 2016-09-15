@@ -21,6 +21,21 @@ require 'logging'
 
 }
 
+#List of ranks
+@ranks = { 
+
+	"Wood\s\s\s\s" 	=> "0"	,
+	"Stone\s\s\s" 	=> "12"	,
+	"Iron\s\s\s\s" 	=> "20"	,
+	"Bronze\s\s" 	=> "40"	,
+	"Silver\s\s"	=> "60"	,
+	"Gold\s\s\s\s" 	=> "100",
+	"Redstone" 		=> "140",
+	"Diamond\s" 	=> "180",
+	"Obsidian" 		=> "220",
+	"Bedrock\s" 	=> "260"
+}
+
 #new filename
 logfile = "logs/" + Time.new.strftime("%Y-%m-%d %H_%M_%S") + ".log"
 

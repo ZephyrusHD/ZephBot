@@ -6,6 +6,7 @@ require_relative 'DBMusic'
 require_relative 'DBMisc'
 require_relative 'DBReddit'
 require_relative 'DBGmail'
+require_relative 'DBRanks'
 
 
 startTime = nil
