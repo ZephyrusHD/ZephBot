@@ -1,6 +1,6 @@
 #Set important fixy things before requires
 
-if Gem::Platform.local.os != " linux"
+if Gem::Platform.local.os != "linux"
 	::RBNACL_LIBSODIUM_GEM_LIB_PATH = "libsodium.dll"
 end
 
