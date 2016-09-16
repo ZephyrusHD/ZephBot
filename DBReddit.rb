@@ -3,6 +3,7 @@ require 'open-uri'
 require 'json'
 require 'redd'
 
+@w = Redd.it(:script, $CONFIG['redid'], $CONFIG['redsec'], $CONFIG['redditUN'], $CONFIG['redditPW'], user_agent: $CONFIG['useragent'])
 
 def doReddit()
 	#Do on a new thread
@@ -11,8 +12,8 @@ def doReddit()
 		cancer = open(string, 'User-Agent' => $CONFIG['useragent']).read
 		json = JSON.parse(open(string, 'User-Agent' => $CONFIG['useragent']).read)
 
-		w = Redd.it(:script, $CONFIG['redid'], $CONFIG['redsec'], $CONFIG['redditUN'], $CONFIG['redditPW'], user_agent: $CONFIG['useragent'])
-		w.authorize!
+		
+		@w.authorize!
 
 		#@logger.info("Collect $200")
 
@@ -24,7 +25,7 @@ def doReddit()
 			newjson = json['data']['children'][x]
 
 			if newjson != nil
-				@bot.channel(225517579496718336).send_message("<@117329036996378628>»\n" + "New Messgae from: " + newjson['data']['author'].to_s + "\n" + "Subject: " + newjson['data']['subject'].to_s + "\n" + newjson['data']['body'].to_s)
+				@bot.channel(225517579496718336).send_message("@Owner»\n" + "New Messgae from: " + newjson['data']['author'].to_s + "\n" + "Subject: " + newjson['data']['subject'].to_s + "\n" + newjson['data']['body'].to_s)
 				y = y + 1
 			end
 
@@ -33,7 +34,7 @@ def doReddit()
 		end
 
 		if x == y
-			w.read_all_messages
+			@w.read_all_messages
 			#@logger.info("All Reddit messages read.")
 		end
 

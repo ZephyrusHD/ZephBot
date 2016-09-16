@@ -33,12 +33,14 @@ startTime = nil
 	startTime = Time.new
 	@logger.debug("Time Init")
 
+	doRanks()
 	#@db.execute("U")
 end
 
 
 #Every heartbeat
 @bot.heartbeat do |event|
+
 
 	doGmail()
 	doReddit()

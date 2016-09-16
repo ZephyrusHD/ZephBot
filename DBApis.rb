@@ -79,8 +79,8 @@ end
 	$id_SQL		= event.user.id
 	$un_SQL 	= event.user.name
 
-	@db.execute("INSERT OR IGNORE INTO players(DISCORDID, DISCORDUN, TIMEPLAYED)
-				VALUES (?, ?, ?)", [$id_SQL, $un_SQL, 0])
+	@db.execute("INSERT OR IGNORE INTO players(DISCORDID, DISCORDUN, RANK, TIMEPLAYED)
+				VALUES (?, ?, ?, ?)", [$id_SQL, $un_SQL, "Wood", 0])
 
 	if !event.channel.private?
 		@logger.debug event.user.name + "|PUBLIC|  :config " + game.to_s + " " + info.join() 

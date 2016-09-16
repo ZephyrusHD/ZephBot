@@ -133,7 +133,10 @@ end
 
 
 #Rcon Command
-@bot.command(:rcon, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", permission_level: 50) do |event, *arg|
+@bot.command(:rcon, bucket: :minecraft, rate_limit_message: "Avaliable in %time% seconds!", 
+	permission_level: 50, description: "Allows commands to be sent directly to a MC server", 
+	usage: "rcon <command>") do |event, *arg|
+
 	@logger.debug event.user.name + " :rcon " + arg.join(" ")
 	rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
 	rcon.auth($CONFIG['rconpass'])
@@ -147,7 +150,7 @@ end
 
 
 #Whitelist Command
-@bot.command(:whitelist, permission_level: 50) do |event, name|
+@bot.command(:whitelist, permission_level: 50, description: "Whitelists people from within Discord", usage: "whitelist <username>") do |event, name|
     @logger.debug event.user.name + " :whitelist " + name.to_s
     rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
     rcon.auth($CONFIG['rconpass'])
@@ -159,10 +162,12 @@ end
     end
 end
 
+
 #Playtime Command
-@bot.command(:playtime) do |event, arg|
+@bot.command(:playtime, description: "Look at someones playtime!", usage: "playtime nil|top|<username>") do |event, arg|
 	case arg
 		when nil
+			rank = @db.execute("SELECT RANK FROM players WHERE DISCORDID = ?", [event.user.id])
 			time = @db.execute("SELECT TIMEPLAYED FROM players WHERE DISCORDID = ?", [event.user.id])
 			time = time.join("")
 			time = time.to_i
@@ -170,9 +175,11 @@ end
 			event.respond("»\n" + "You have played a total of: \n" + timeArray[0].to_s + " Weeks\n" + timeArray[1].to_s + 
 				" Days\n" + timeArray[2].to_s + " Hours\n" + timeArray[3].to_s + 
 				" Minutes\n" + timeArray[4].to_s + " Seconds.")
+			event << "You are rank " + rank.to_s
 
-		when "top"
+		when "top", "list"
 				timeArray = @db.execute("SELECT TIMEPLAYED, MCUN FROM players ORDER BY -TIMEPLAYED LIMIT 25")
+				rankName = @db.execute("SELECT RANK FROM players ORDER BY -TIMEPLAYED LIMIT 25")
 				event << "»"
 				x = 1
 				event << "```"
@@ -204,8 +211,12 @@ end
 						y = y + 1
 					end
 
+					new_rankName = rankName[x-1].to_s
+					new_rankName.delete!("[\"")
+					new_rankName.delete!("\"]")
+
 					event << rank.join("") + "| " + stringArray.join("") + "\t " + array[0].to_s + "W " + array[1].to_s + "D " + 
-					array[2].to_s + "H " + array[3].to_s + "M " + array[4].to_s + "S "
+					array[2].to_s + "H " + array[3].to_s + "M " + array[4].to_s + "S " + " | " + new_rankName
 					
 					x = x + 1
 				end
@@ -220,6 +231,7 @@ end
 			event.respond("AvaNight played your mom last night.")
 
 		else
+			rank = @db.execute("SELECT RANK FROM players WHERE DISCORDID = ? OR MCUN = ?", [arg, arg])
 			time = @db.execute("SELECT TIMEPLAYED FROM players WHERE DISCORDUN = ? OR MCUN = ?", [arg, arg])
 			p time.to_s
 			if time == "[]"
@@ -228,17 +240,16 @@ end
 				time = time.join()
 				time = time.to_i
 				timeArray = secondsToTime(time)
-				event.respond("»\n" + "You have played a total of: \n" + timeArray[0].to_s + " Weeks\n" + timeArray[1].to_s + 
+				event.respond("»\n" + "They have played a total of: \n" + timeArray[0].to_s + " Weeks\n" + timeArray[1].to_s + 
 				" Days\n" + timeArray[2].to_s + " Hours\n" + timeArray[3].to_s + 
 				" Minutes\n" + timeArray[4].to_s + " Seconds.")
+				event << "Rank " + rank.to_s
 			end
-
-
 	end
 end
 
 
-@bot.command(:event) do |event, team|
+@bot.command(:event, description: "Lists team/event information", usage: "event nil|list|current") do |event, team|
 	@logger.debug event.user.name + " :event " + team.to_s
 
 	user_team = @db.execute("SELECT EVENTTEAM FROM players WHERE DISCORDID = ?", [event.user.id])
@@ -299,38 +310,52 @@ end
 			event << "Insert generic picture 2"
 			event << "Insert generic picture 3"
 			event << "Insert generic picture 4"
-
-
-
 	end
-
-
 end
 
 
-@bot.command(:ranks) do |event|
+@bot.command(:ranks, description: "View In-Game ranks and requirements", usage: "ranks") do |event|
 
 	event << "```"
+	event << "Ranking          |  Hrs"
+	event << "-----------------------"
+
+	x = 0
 	@ranks.each do |key, value|
-		event << key.to_s + " | " + value.to_s
+
+		key_new = key.dup
+		needToBe = 16 - key_new.length
+		(1..needToBe).each do |thing|
+			key_new << "\s"
+		end
+
+		if x == 10 || x == 20 || x == 30
+			event << "-----------------------"
+		end
+
+		event << key_new.to_s + " |  " + value.to_s
+		x = x + 1
 	end
-	event << "```"
-=begin
-	event << "»"
-	event << "Re-Render Reality Player Ranks"
-	event << "Wood - 0"
-	event << "Stone - 12"
-	event << "Iron - 20"
-	event << "Bronze - 40"
-	event << "Silver - 60"
-	event << "Gold - 100"
-	event << "Redstone - 140"
-	event << "Diamond - 180"
-	event << "Obsidian - 220"
-	event << "Bedrock - 260"
+
 	event << ""
+	event << "Ranking          |    $"
+	event << "-----------------------"
+	event << "Emerald          |  <50"
+	event << "Ender            | <100"
+	event << "Void             | >100"
+	event << "```"
+end
+=begin
 	event << "Emerald <$50"
 	event << "Ender <$100"
 	event << "Void +$100"
+
+
+		event << ""
+	event << "Ranking          | Name"
+	event << "-----------------------"
+	event << "Draconic         | Kilo"
+	event << "Wyvern		   | Cooki3monsta"
+	event << "Wither		   | Dorambor, God_Nicolas"
+	event << "Nether		   | Zero"
 =end
-end
