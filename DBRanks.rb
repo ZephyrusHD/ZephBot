@@ -87,7 +87,7 @@ def doRanks()
 			else
 				if old_rank.to_s != new_rank.to_s
 					@db.execute("UPDATE players SET RANK = ? WHERE MCUN = ?", [new_rank,user])
-					#rcon.command("p user " + user.to_s + " group set " + new_rank.to_s)
+					rcon.command("p user " + user.to_s + " group set " + new_rank.to_s)
 					p "p user " + user.to_s + " group set " + new_rank.to_s
 				end
 			end
