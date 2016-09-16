@@ -1,4 +1,5 @@
 require_relative 'DBCommon'
+require 'RubyMinecraft'
 
 @ranks = { 
 
@@ -32,21 +33,34 @@ require_relative 'DBCommon'
 	"Gold++"	=>	"890"	, #50	
 	"Redstone++"=>	"930"	, #50	
 	"Diamond++"	=>	"990"	, #60	
-	"Obsidian++"=>	"1500"	, #60	
-	"Bedrock++"	=>	"1570"	  #70	
+	"Obsidian++"=>	"1050"	, #60	
+	"Bedrock++"	=>	"1120"	, #70	
+
+	"Wood+++"	=>	"1190"	, #70	
+	"Stone+++"	=>	"1230"	, #40	
+	"Iron+++"	=>	"1270"	, #40	
+	"Bronze+++"	=>	"1320"	, #50	
+	"Silver+++"	=>	"1370"	, #50	
+	"Gold+++"	=>	"1430"	, #60	
+	"Redstone+++"=>	"1490"	, #60	
+	"Diamond+++"=>	"1560"	, #70	
+	"Obsidian+++"=>	"1630"	, #70	
+	"Bedrock+++"=>	"1710"	  #80	
 
 
 }
 
-p @ranks
 def doRanks()
+
 	Thread.new{
+		begin
+		rcon = RCON::Minecraft.new("rr3.re-renderreality.net", 25576);
+		rcon.auth($CONFIG['rconpass'])
 
 		time_players = @db.execute("SELECT TIMEPLAYED, MCUN FROM players")
 		time_players.each do |seconds, user|
 
 			x = (seconds / 3600.0)
-			p x.to_s
 			new_rank = nil
 
 			catch :exit do
@@ -55,12 +69,15 @@ def doRanks()
 						throw :exit if true
 					elsif
 						new_rank = rank
-						p user.to_s + " " + new_rank.to_s
 					end
 				end
 			end
 			#check for not staff
 			old_rank = @db.execute("SELECT RANK FROM players WHERE MCUN = ?", [user])
+
+			old_rank = old_rank.join("")
+			old_rank.delete!("[[\"")
+			old_rank.delete!("\"]]")
 
 			file = File.read('staff.json')
 			staff = JSON.parse(file)
@@ -68,8 +85,16 @@ def doRanks()
 			if staff['Staff'].include?(user)
 				nil
 			else
-				@db.execute("UPDATE players SET RANK = ? WHERE MCUN = ?", [new_rank,user])
+				if old_rank.to_s != new_rank.to_s
+					@db.execute("UPDATE players SET RANK = ? WHERE MCUN = ?", [new_rank,user])
+					#rcon.command("p user " + user.to_s + " group set " + new_rank.to_s)
+					p "p user " + user.to_s + " group set " + new_rank.to_s
+				end
 			end
 		end
+		nil
+	rescue => e 
+		p e
+	end
 	}
 end
