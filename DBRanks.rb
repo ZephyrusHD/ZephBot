@@ -72,7 +72,6 @@ def doRanks()
 					end
 				end
 			end
-			#check for not staff
 			old_rank = @db.execute("SELECT RANK FROM players WHERE MCUN = ?", [user])
 
 			old_rank = old_rank.join("")
@@ -81,7 +80,8 @@ def doRanks()
 
 			file = File.read('staff.json')
 			staff = JSON.parse(file)
-
+			
+			#check for not staff
 			if staff['Staff'].include?(user)
 				nil
 			else
