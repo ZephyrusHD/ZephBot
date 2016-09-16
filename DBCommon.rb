@@ -21,28 +21,6 @@ require 'logging'
 
 }
 
-#test
-#List of old ranks
-
-=begin
-@ranks = { 
-
-	# ok no do the string thing
-	"Wood\s\s\s\s" 	=> "\s\s0", #+0
-	"Stone\s\s\s" 	=> "\s12" , #+12
-	"Iron\s\s\s\s" 	=> "\s20" , #+8
-	"Bronze\s\s" 	=> "\s40" , #+20
-	"Silver\s\s"	=> "\s60" , #+20
-	"Gold\s\s\s\s" 	=>  "100" , #+40
-	"Redstone" 		=>  "140" , #+40
-	"Diamond\s" 	=>  "200" , #+60	180
-	"Obsidian" 		=>  "260" , #+60      220
-	"Bedrock\s" 	=>  "340" , #+80       260
-
-	"Wood+"			=> 
-}
-=end
-
 #new filename
 logfile = "logs/" + Time.new.strftime("%Y-%m-%d %H_%M_%S") + ".log"
 

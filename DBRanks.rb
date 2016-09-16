@@ -45,19 +45,31 @@ def doRanks()
 		time_players = @db.execute("SELECT TIMEPLAYED, MCUN FROM players")
 		time_players.each do |seconds, user|
 
-			x = (seconds * 3600)
+			x = (seconds / 3600.0)
+			p x.to_s
 			new_rank = nil
 
 			catch :exit do
 				@ranks.each do |rank, hrs|
-					if x < hrs.to_i
+					if x < hrs.to_f
 						throw :exit if true
 					elsif
 						new_rank = rank
+						p user.to_s + " " + new_rank.to_s
 					end
 				end
 			end
+			#check for not staff
+			old_rank = @db.execute("SELECT RANK FROM players WHERE MCUN = ?", [user])
 
+			file = File.read('staff.json')
+			staff = JSON.parse(file)
+
+			if staff['Staff'].include?(user)
+				nil
+			else
+				@db.execute("UPDATE players SET RANK = ? WHERE MCUN = ?", [new_rank,user])
+			end
 		end
 	}
 end
